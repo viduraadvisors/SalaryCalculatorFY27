@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Salary Structuring Calculator FY 2026-27</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+      background: #f4f6f9;
+    }
+    h1, h2, h3 { color: #2c3e50; text-align: center; }
+    h1 { font-size: 1.6rem; margin-bottom: 4px; }
+    .subtitle { text-align:center; color:#666; font-size:0.9rem; margin-bottom:20px; }
+    .calculator {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    .section-header {
+      background: #2c3e50;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      margin: 20px 0 14px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; font-size:0.9rem; }
+    label .note { font-weight:normal; color:#888; font-size:0.8rem; }
+    input, select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 0.93rem;
+    }
+    input[readonly] { background-color: #f0f0f0; color:#444; }
+    input:focus, select:focus { outline: 2px solid #3498db; border-color:#3498db; }
+    .sub-fields {
+      margin-left: 16px;
+      padding-left: 14px;
+      border-left: 3px solid #3498db;
+      margin-top: 10px;
+    }
+    .results {
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size:0.92rem; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #e8e8e8; }
+    th { background-color: #2c3e50; color:#fff; }
+    .highlight { background-color: #e8f4fc; font-weight: bold; }
+    .highlight-green { background-color: #e8f8ee; font-weight: bold; }
+    button {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      display: block;
+      margin: 22px auto 0;
+      transition: background 0.2s;
+    }
+    button:hover { background-color: #1a252f; }
+    .toggle-container { display: flex; align-items: center; gap: 24px; margin-top: 4px; }
+    .toggle-option { display:flex; align-items:center; font-weight:normal; cursor:pointer; }
+    .toggle-option input[type=radio] { width:auto; margin-right:6px; }
+    .tax-comparison { display: flex; gap: 20px; }
+    .tax-regime { flex: 1; }
+    @media(max-width:600px) { .tax-comparison { flex-direction:column; } }
+    .regime-badge {
+      display:inline-block;
+      background:#e74c3c;
+      color:#fff;
+      padding:3px 10px;
+      border-radius:20px;
+      font-size:0.85rem;
+    }
+    .regime-badge.new { background:#27ae60; }
+    .tag-nr {
+      display:inline-block;
+      background:#27ae60;
+      color:#fff;
+      font-size:0.68rem;
+      padding:1px 5px;
+      border-radius:3px;
+      margin-left:4px;
+      vertical-align:middle;
+    }
+    .tag-or {
+      display:inline-block;
+      background:#e67e22;
+      color:#fff;
+      font-size:0.68rem;
+      padding:1px 5px;
+      border-radius:3px;
+      margin-left:4px;
+      vertical-align:middle;
+    }
+    .info-box {
+      background:#fffbea;
+      border:1px solid #f0d060;
+      border-radius:6px;
+      padding:10px 14px;
+      font-size:0.83rem;
+      margin-bottom:14px;
+      color:#555;
+    }
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media(max-width:580px){ .two-col{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<h1>Salary Structuring Calculator</h1>
+<p class="subtitle">
+  Tax Year 2026-27 &nbsp;|&nbsp; Income Tax Act, 2025 &nbsp;|&nbsp; Income Tax Rules, 2026 &nbsp;|&nbsp; Hyderabad (Metro — 50% HRA)
+</p>
+<div style="background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:10px 16px; max-width:960px; margin:0 auto 18px; font-size:0.83rem; color:#555;">
+  ⚠️ <strong>Applicable for Tax Year 2026-27 (April 1, 2026 – March 31, 2027) only.</strong>
+  Governed by the <strong>Income Tax Act, 2025</strong> (effective 1 Apr 2026) and <strong>Income Tax Rules, 2026</strong>.
+  For FY 2025-26 salary structuring, a separate calculator applies (Income Tax Act, 1961).
+</div>
+
+<div class="calculator">
+
+  <!-- ── CTC Inputs ── -->
+  <div class="section-header">Step 1 – CTC Details</div>
+
+  <div class="two-col">
+    <div class="form-group">
+      <label for="total-ctc">Total CTC (Annual) ₹</label>
+      <input type="number" id="total-ctc" min="0" step="1000" placeholder="e.g. 1200000" oninput="calculateSalary()">
+    </div>
+    <div class="form-group">
+      <label for="variable-pay">Variable Pay ₹ <span class="note">(part of CTC)</span></label>
+      <input type="number" id="variable-pay" min="0" step="1000" value="0" oninput="calculateSalary()">
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="form-group">
+      <label for="ctc">Fixed CTC (CTC – Variable) ₹</label>
+      <input type="number" id="ctc" readonly>
+    </div>
+    <div class="form-group">
+      <label>Group Insurance?</label>
+      <div class="toggle-container">
+        <label class="toggle-option"><input type="radio" name="insurance-opt" id="insurance-yes" value="yes" checked onchange="calculateSalary()"> Yes</label>
+        <label class="toggle-option"><input type="radio" name="insurance-opt" id="insurance-no" value="no" onchange="calculateSalary()"> No</label>
+      </div>
+      <div id="insurance-container" style="margin-top:8px;">
+        <input type="number" id="insurance-amount" min="0" step="1000" value="5000" placeholder="Enter annual insurance amount ₹" oninput="calculateSalary()" style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box;">
+        <span style="font-size:0.8rem; color:#888;">Annual premium deducted from CTC before Basic calculation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Auto-Optimise ── -->
+  <div style="display:flex; justify-content:center; margin-top:18px;">
+    <button onclick="autoOptimise()" style="background:#27ae60; font-size:15px; padding:12px 28px;">⚡ Auto-Optimise for Maximum Tax Saving</button>
+  </div>
+
+  <!-- ── Salary Components ── -->
+  <div class="section-header">Step 2 – Salary Components</div>
+  <div class="info-box">
+    Basic = (Fixed CTC – Insurance premium if opted) × 50% &nbsp;|&nbsp; HRA = 50% of Basic (Metro) &nbsp;|&nbsp; Gratuity = 4.81% of Basic (if opted) &nbsp;|&nbsp; PF Employer = ₹21,600 p.a.
+  </div>
+
+  <div class="two-col">
+    <div class="form-group">
+      <label for="basic">Basic Salary ₹</label>
+      <input type="number" id="basic" readonly>
+    </div>
+    <div class="form-group">
+      <label for="hra">HRA ₹ <span class="note">(50% of Basic – Metro)</span></label>
+      <input type="number" id="hra" readonly>
+    </div>
+    <div class="form-group">
+      <label for="pf">PF Employer Contribution ₹</label>
+      <input type="number" id="pf" value="21600" readonly>
+    </div>
+    <div class="form-group">
+      <label>Gratuity (4.81% of Basic)?</label>
+      <div class="toggle-container">
+        <label class="toggle-option"><input type="radio" name="gratuity-opt" id="gratuity-yes" value="yes" checked onchange="calculateSalary()"> Yes</label>
+        <label class="toggle-option"><input type="radio" name="gratuity-opt" id="gratuity-no" value="no" onchange="calculateSalary()"> No</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NPS Employer ── -->
+  <div class="section-header">Step 3 – NPS Employer Contribution (Optional)</div>
+  <div class="form-group">
+    <label>Opt for NPS Employer Contribution?</label>
+    <div class="toggle-container">
+      <label class="toggle-option"><input type="radio" name="nps" id="nps-yes" value="yes" onchange="toggleNPS()"> Yes</label>
+      <label class="toggle-option"><input type="radio" name="nps" id="nps-no" value="no" checked onchange="toggleNPS()"> No</label>
+    </div>
+    <div id="nps-container" class="sub-fields" style="display:none;">
+      <div class="info-box" style="margin-top:10px;">
+        Maximum allowed: <strong>10% of Basic</strong> (Old Regime) &nbsp;/&nbsp; <strong>14% of Basic</strong> (New Regime). You can enter a lower amount.
+      </div>
+      <div class="two-col">
+        <div class="form-group">
+          <label for="nps-old-amount">NPS – Old Regime ₹ <span class="note">(max shown)</span></label>
+          <input type="number" id="nps-old-amount" min="0" step="1000" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="nps-new-amount">NPS – New Regime ₹ <span class="note">(max shown)</span></label>
+          <input type="number" id="nps-new-amount" min="0" step="1000" oninput="calculateSalary()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FBP Components ── -->
+  <div class="section-header">Step 4 – Flexible Benefit Plan (FBP)</div>
+  <div class="form-group">
+    <label>Opt for FBP Components?</label>
+    <div class="toggle-container">
+      <label class="toggle-option"><input type="radio" name="fbp" id="fbp-yes" value="yes" onchange="toggleFBP()"> Yes</label>
+      <label class="toggle-option"><input type="radio" name="fbp" id="fbp-no" value="no" checked onchange="toggleFBP()"> No</label>
+    </div>
+    <div id="fbp-container" class="sub-fields" style="display:none; margin-top:10px;">
+      <div class="info-box">
+        <span class="tag-nr">NR</span> = Available (tax-exempt) under New Regime &nbsp;&nbsp;
+        <span class="tag-or">OR</span> = Old Regime only
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label for="gadget-allowance">
+            Gadget &amp; Equipment <span class="tag-nr">NR</span> <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹42,000</span>
+          </label>
+          <input type="number" id="gadget-allowance" min="0" max="42000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="telecom-allowance">
+            Telecom <span class="tag-nr">NR</span> <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹36,000</span>
+          </label>
+          <input type="number" id="telecom-allowance" min="0" max="36000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="books-allowance">
+            Books &amp; Periodicals <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹12,000</span>
+          </label>
+          <input type="number" id="books-allowance" min="0" max="12000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="health-allowance">
+            Health &amp; Wellness <span class="tag-nr">NR</span> <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹36,000</span>
+          </label>
+          <input type="number" id="health-allowance" min="0" max="36000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="learning-allowance">
+            Learning &amp; Development <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹36,000</span>
+          </label>
+          <input type="number" id="learning-allowance" min="0" max="36000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="meal-coupon">
+            Meal Coupon <span class="tag-nr">NR</span> <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹1,44,000</span>
+          </label>
+          <input type="number" id="meal-coupon" min="0" max="144000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="gift-card">
+            Gift Card / Voucher <span class="tag-nr">NR</span> <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹15,000</span>
+          </label>
+          <input type="number" id="gift-card" min="0" max="15000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
+          <label for="lta">
+            LTA <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹60,000</span>
+          </label>
+          <input type="number" id="lta" min="0" max="60000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Other Allowance ── -->
+  <div class="form-group" style="margin-top:10px;">
+    <label for="other-allowance">Other Allowance (balancing figure) ₹</label>
+    <input type="text" id="other-allowance" readonly>
+  </div>
+
+  <!-- ── Tax Declarations ── -->
+  <div class="section-header">Step 5 – Tax Declarations (Old Regime)</div>
+
+  <div class="two-col">
+    <div class="form-group">
+      <label for="section80c">Section 80C <span class="note">Max ₹1,50,000</span></label>
+      <input type="number" id="section80c" min="0" max="150000" step="1000" value="0" oninput="calculateTax()">
+    </div>
+    <div class="form-group">
+      <label for="section80d">Section 80D – Health Ins. <span class="note">Max ₹75,000</span></label>
+      <input type="number" id="section80d" min="0" max="75000" step="1000" value="0" oninput="calculateTax()">
+    </div>
+    <div class="form-group">
+      <label for="nps-employee">NPS Employee 80CCD(1B) <span class="note">Max ₹50,000</span></label>
+      <input type="number" id="nps-employee" min="0" max="50000" step="1000" value="0" oninput="calculateTax()">
+    </div>
+    <div class="form-group">
+      <label for="home-loan-interest">Home Loan Interest <span class="note">Max ₹2,00,000</span></label>
+      <input type="number" id="home-loan-interest" min="0" max="200000" step="1000" value="0" oninput="calculateTax()">
+    </div>
+    <div class="form-group">
+      <label for="education-loan-interest">Education Loan Interest</label>
+      <input type="number" id="education-loan-interest" min="0" step="1000" value="0" oninput="calculateTax()">
+    </div>
+  </div>
+
+  <!-- ── HRA Declaration ── -->
+  <div class="form-group">
+    <label>HRA Declaration (Old Regime only)</label>
+    <div class="toggle-container">
+      <label class="toggle-option"><input type="radio" name="hra-declaration" id="hra-declaration-yes" value="yes" onchange="toggleHRADeclaration()"> Yes</label>
+      <label class="toggle-option"><input type="radio" name="hra-declaration" id="hra-declaration-no" value="no" checked onchange="toggleHRADeclaration()"> No</label>
+    </div>
+    <div id="hra-declaration-container" class="sub-fields" style="display:none;">
+      <div class="two-col" style="margin-top:10px;">
+        <div class="form-group">
+          <label for="rent-paid">Annual Rent Paid ₹</label>
+          <input type="number" id="rent-paid" min="0" step="1000" value="0" oninput="calculateHRAExemption()">
+        </div>
+        <div class="form-group">
+          <label for="metro-city">Metro City?</label>
+          <select id="metro-city" onchange="calculateHRAExemption()">
+            <option value="yes" selected>Yes (Hyderabad / Mumbai / Delhi / Chennai / Kolkata / Bengaluru)</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- HRA Formula Breakdown -->
+      <div class="info-box" id="hra-formula-box" style="margin-top:10px; font-size:0.85rem;">
+        <strong>HRA Exemption = Lowest of these 3:</strong>
+        <table style="margin-top:8px; font-size:0.85rem;">
+          <tr>
+            <th style="width:5%"></th>
+            <th>Formula</th>
+            <th>Your Amount</th>
+            <th>Status</th>
+          </tr>
+          <tr id="hra-row1">
+            <td>A</td>
+            <td>Actual HRA received</td>
+            <td id="hra-opt1">–</td>
+            <td id="hra-opt1-tag">–</td>
+          </tr>
+          <tr id="hra-row2">
+            <td>B</td>
+            <td>Rent Paid − 10% of Basic</td>
+            <td id="hra-opt2">–</td>
+            <td id="hra-opt2-tag">–</td>
+          </tr>
+          <tr id="hra-row3">
+            <td>C</td>
+            <td id="hra-opt3-label">50% of Basic (Metro)</td>
+            <td id="hra-opt3">–</td>
+            <td id="hra-opt3-tag">–</td>
+          </tr>
+        </table>
+        <div style="margin-top:10px; padding:8px; background:#fff3cd; border-radius:5px; border:1px solid #ffc107;">
+          💡 <strong>Max useful rent:</strong> <span id="hra-max-rent" style="color:#c0392b; font-weight:bold;">–</span>
+          &nbsp;— paying rent above this gives <u>no additional tax benefit</u>.
+        </div>
+        <div style="margin-top:8px;">
+          ✅ <strong>HRA Exemption:</strong> <span id="hra-exemption-display" style="color:#27ae60; font-size:1rem; font-weight:bold;">₹0</span>
+        </div>
+      </div>
+      <input type="hidden" id="hra-exemption" value="0">
+    </div>
+  </div>
+
+  <div style="display:flex; gap:12px; justify-content:center; margin-top:22px; flex-wrap:wrap;">
+    <button onclick="calculateSalary()" style="background:#2c3e50;">🔢 Calculate Salary &amp; Tax</button>
+  </div>
+</div>
+
+<!-- ═══════════════ RESULTS ═══════════════ -->
+<div class="results">
+
+  <!-- Salary Breakdown -->
+  <h2>Salary Breakdown</h2>
+  <table>
+    <tr><th>Component</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
+    <tr><td>Basic Salary</td><td id="result-basic-old">–</td><td id="result-basic-new">–</td></tr>
+    <tr><td>HRA (50% of Basic)</td><td id="result-hra-old">–</td><td id="result-hra-new">–</td></tr>
+    <tr><td>Group Insurance</td><td id="result-insurance-old">–</td><td id="result-insurance-new">–</td></tr>
+    <tr><td>PF Employer</td><td id="result-pf-old">–</td><td id="result-pf-new">–</td></tr>
+    <tr><td>Gratuity</td><td id="result-gratuity-old">–</td><td id="result-gratuity-new">–</td></tr>
+    <tr><td>NPS Employer</td><td id="result-nps-old">–</td><td id="result-nps-new">–</td></tr>
+    <tr><td>FBP Components</td><td id="result-fbp-old">–</td><td id="result-fbp-new">–</td></tr>
+    <tr><td>Other Allowance</td><td id="result-other-old">–</td><td id="result-other-new">–</td></tr>
+    <tr><td>Variable Pay</td><td id="variable-old">–</td><td id="variable-new">–</td></tr>
+    <tr class="highlight"><td>Total CTC</td><td id="result-ctc-old">–</td><td id="result-ctc-new">–</td></tr>
+  </table>
+
+  <!-- Tax Comparison -->
+  <h2 style="margin-top:30px;">Tax Comparison</h2>
+  <div class="tax-comparison">
+    <div class="tax-regime">
+      <h3>Old Tax Regime</h3>
+      <table>
+        <tr><td>Gross Salary</td><td id="old-gross-salary">–</td></tr>
+        <tr><td>Standard Deduction</td><td>₹50,000</td></tr>
+        <tr><td>HRA Exemption</td><td id="old-hra-exemption">–</td></tr>
+        <tr><td>Section 80C</td><td id="old-section80c">–</td></tr>
+        <tr><td>Section 80D</td><td id="old-section80d">–</td></tr>
+        <tr><td>NPS Employee (80CCD1B)</td><td id="old-nps-employee">–</td></tr>
+        <tr><td>Home Loan Interest</td><td id="old-home-loan">–</td></tr>
+        <tr><td>Education Loan Interest</td><td id="old-edu-loan">–</td></tr>
+        <tr class="highlight"><td>Taxable Income</td><td id="old-taxable-income">–</td></tr>
+        <tr><td>Base Tax</td><td id="old-base-tax">–</td></tr>
+        <tr><td>Surcharge</td><td id="old-surcharge">–</td></tr>
+        <tr><td>Cess (4%)</td><td id="old-cess">–</td></tr>
+        <tr class="highlight"><td>Total Tax Liability</td><td id="old-total-tax">–</td></tr>
+      </table>
+    </div>
+    <div class="tax-regime">
+      <h3>New Tax Regime <span class="tag-nr" style="font-size:0.75rem;">S.202 – IT Act 2025</span></h3>
+      <table>
+        <tr><td>Gross Salary</td><td id="new-gross-salary">–</td></tr>
+        <tr><td>Standard Deduction</td><td>₹75,000</td></tr>
+        <tr class="highlight"><td>Taxable Income</td><td id="new-taxable-income">–</td></tr>
+        <tr><td>Base Tax (before rebate)</td><td id="new-base-tax">–</td></tr>
+        <tr><td>Rebate u/s 87A <span class="note">(if taxable ≤ ₹12L)</span></td><td id="new-rebate">–</td></tr>
+        <tr><td>Surcharge</td><td id="new-surcharge">–</td></tr>
+        <tr><td>Cess (4%)</td><td id="new-cess">–</td></tr>
+        <tr class="highlight"><td>Total Tax Liability</td><td id="new-total-tax">–</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recommendation -->
+  <div style="text-align:center; margin-top:20px; font-size:1.05rem; font-weight:bold;">
+    Recommended Regime: <span id="recommended-regime">–</span>
+    &nbsp;&nbsp; Tax Saving: <span id="tax-saving" style="color:#27ae60;">₹0</span>
+  </div>
+
+  <!-- Auto-Optimise Summary Banner -->
+  <div id="optimise-banner" style="display:none; margin-top:20px; background:#eafaf1; border:1.5px solid #27ae60; border-radius:8px; padding:16px 20px;">
+    <div style="font-size:1rem; font-weight:bold; color:#1e8449; margin-bottom:10px;">⚡ Auto-Optimised Summary</div>
+    <div id="optimise-summary" style="font-size:0.87rem; color:#333; line-height:1.8;"></div>
+    <div style="margin-top:12px; font-size:0.8rem; color:#888;">* Auto-optimise fills all fields to their maximum allowed limits. You can manually adjust any field and recalculate.</div>
+  </div>
+
+  <!-- Net Take-Home -->
+  <h2 style="margin-top:30px;">Net Take-Home Salary</h2>
+  <div class="info-box">
+    <strong>Bank Credit</strong> = Cash salary credited to your bank account every month (after PF &amp; tax deductions).<br>
+    <strong>Flexi Benefits</strong> = Amount received as reimbursements against bills (e.g. meal, gadget, telecom, health) — not cash in bank but still yours to use.<br>
+    <strong>Total Net Pay</strong> = Bank Credit + Flexi Benefits received.
+  </div>
+  <table>
+    <tr><th>Item</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
+    <tr><td>Gross Salary (before deductions)</td><td id="old-gross-cash">–</td><td id="new-gross-cash">–</td></tr>
+    <tr><td>(-) PF Employee Contribution</td><td id="old-pf-emp">–</td><td id="new-pf-emp">–</td></tr>
+    <tr><td>(-) Income Tax (TDS)</td><td id="old-tax-deduct">–</td><td id="new-tax-deduct">–</td></tr>
+    <tr class="highlight"><td>💳 Annual Bank Credit</td><td id="old-bank-annual">–</td><td id="new-bank-annual">–</td></tr>
+    <tr class="highlight"><td>💳 Monthly Bank Credit</td><td id="old-bank-monthly">–</td><td id="new-bank-monthly">–</td></tr>
+    <tr><td style="padding-top:14px;">🎁 Flexi Benefits (Annual)</td><td id="old-flexi-annual">–</td><td id="new-flexi-annual">–</td></tr>
+    <tr><td>🎁 Flexi Benefits (Monthly)</td><td id="old-flexi-monthly">–</td><td id="new-flexi-monthly">–</td></tr>
+    <tr class="highlight-green"><td>✅ Total Annual Net Pay</td><td id="old-net-annual">–</td><td id="new-net-annual">–</td></tr>
+    <tr class="highlight-green"><td>✅ Total Monthly Net Pay</td><td id="old-net-monthly">–</td><td id="new-net-monthly">–</td></tr>
+  </table>
+
+  <!-- NPS Note -->
+  <div id="nps-note" style="display:none; margin-top:16px;">
+    <table>
+      <tr><th>NPS Corpus (Annual Employer Contribution)</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
+      <tr><td>NPS Employer Contribution</td><td id="result-nps-old-net">–</td><td id="result-nps-new-net">–</td></tr>
+    </table>
+    <p style="font-size:0.8rem; color:#888; margin-top:6px;">* NPS employer contribution is part of CTC but received as corpus at retirement / exit.</p>
+  </div>
+
+</div>
+
+<!-- ═══════════════ SCRIPT ═══════════════ -->
+<script>
+
+  // ── New Regime Tax Slabs FY 2025-26 (Finance Act 2025) ──
+  // 0-4L: 0%, 4-8L: 5%, 8-12L: 10%, 12-16L: 15%, 16-20L: 20%, 20-24L: 25%, >24L: 30%
+  // Rebate u/s 87A: if taxable income ≤ 12,00,000 → full tax rebated (tax = 0)
+  function calculateNewRegimeTax(income) {
+    let tax = 0;
+    const slabs = [
+      { limit: 400000,  rate: 0    },
+      { limit: 400000,  rate: 0.05 },
+      { limit: 400000,  rate: 0.10 },
+      { limit: 400000,  rate: 0.15 },
+      { limit: 400000,  rate: 0.20 },
+      { limit: 400000,  rate: 0.25 },
+      { limit: Infinity,rate: 0.30 },
+    ];
+    let remaining = income;
+    for (const slab of slabs) {
+      if (remaining <= 0) break;
+      const taxable = Math.min(remaining, slab.limit);
+      tax += taxable * slab.rate;
+      remaining -= taxable;
+    }
+    // Rebate u/s 87A – if taxable income ≤ 12,00,000 tax is fully rebated
+    const rebate = income <= 1200000 ? tax : 0;
+    const taxAfterRebate = Math.max(0, tax - rebate);
+
+    // Marginal relief: if income just above 12L, cap tax so net income ≥ 12L
+    let finalTax = taxAfterRebate;
+    if (income > 1200000 && taxAfterRebate > (income - 1200000)) {
+      finalTax = income - 1200000;
+    }
+
+    const surcharge = calculateSurcharge(finalTax, income, 'new');
+    const total = finalTax + surcharge;
+    const cess = total * 0.04;
+    return { baseTax: tax, rebate, taxAfterRebate: finalTax, surcharge, cess, total: total + cess };
+  }
+
+  // ── Old Regime Tax Slabs FY 2025-26 ──
+  // 0-2.5L: 0%, 2.5-5L: 5%, 5-10L: 20%, >10L: 30%
+  // Rebate u/s 87A: if taxable ≤ 5L → rebate up to ₹12,500
+  function calculateOldRegimeTax(income) {
+    let tax = 0;
+    if (income <= 250000) tax = 0;
+    else if (income <= 500000) tax = (income - 250000) * 0.05;
+    else if (income <= 1000000) tax = 12500 + (income - 500000) * 0.20;
+    else tax = 112500 + (income - 1000000) * 0.30;
+
+    const rebate = income <= 500000 ? Math.min(tax, 12500) : 0;
+    const taxAfterRebate = Math.max(0, tax - rebate);
+    const surcharge = calculateSurcharge(taxAfterRebate, income, 'old');
+    const total = taxAfterRebate + surcharge;
+    const cess = total * 0.04;
+    return { baseTax: tax, rebate, taxAfterRebate, surcharge, cess, total: total + cess };
+  }
+
+  function calculateSurcharge(tax, income, regime) {
+    if (income <= 5000000) return 0;
+    if (income <= 10000000) return tax * 0.10;
+    if (income <= 20000000) return tax * 0.15;
+    if (income <= 50000000) return tax * (regime === 'new' ? 0.25 : 0.25);
+    return tax * (regime === 'new' ? 0.25 : 0.37);
+  }
+
+  function fmt(n) { return Math.round(n).toLocaleString('en-IN'); }
+
+  // ── Main Calculation ──
+  function calculateSalary() {
+    const totalCTC    = parseFloat(document.getElementById('total-ctc').value) || 0;
+    const variablePay = parseFloat(document.getElementById('variable-pay').value) || 0;
+    const fixedCTC    = Math.max(0, totalCTC - variablePay);
+    const insurance   = document.getElementById('insurance-yes').checked
+                        ? (parseFloat(document.getElementById('insurance-amount').value) || 0) : 0;
+    document.getElementById('insurance-container').style.display =
+      document.getElementById('insurance-yes').checked ? 'block' : 'none';
+
+    document.getElementById('ctc').value = fixedCTC.toFixed(0);
+
+    // Basic = (Fixed CTC - Insurance if opted) × 50%
+    const basic    = (fixedCTC - insurance) * 0.5;
+    const hraAmt   = basic * 0.5;   // Metro: 50% of Basic
+    const pf       = 21600;
+    const gratuity = document.getElementById('gratuity-yes').checked ? basic * 0.0481 : 0;
+
+    document.getElementById('basic').value    = basic.toFixed(0);
+    document.getElementById('hra').value      = hraAmt.toFixed(0);
+
+    // ── FBP ──
+    let fbpTotal = 0;
+    let fbpOldExempt = 0; // components exempt only in old regime
+    let fbpBothExempt = 0; // components exempt in BOTH regimes (meal + gift)
+
+    if (document.getElementById('fbp-yes').checked) {
+      const gadgets = Math.min(+document.getElementById('gadget-allowance').value, 42000);
+      const telecom = Math.min(+document.getElementById('telecom-allowance').value, 36000);
+      const books   = Math.min(+document.getElementById('books-allowance').value,  12000);
+      const health  = Math.min(+document.getElementById('health-allowance').value, 36000);
+      const learn   = Math.min(+document.getElementById('learning-allowance').value, 36000);
+      const meal    = Math.min(+document.getElementById('meal-coupon').value,      144000);
+      const gift    = Math.min(+document.getElementById('gift-card').value,         15000);
+      const lta     = Math.min(+document.getElementById('lta').value,               60000);
+
+      fbpTotal = gadgets + telecom + books + health + learn + meal + gift + lta;
+
+      // Old regime only: LTA, books, learning
+      // Both regimes: meal, gift, gadgets, telecom, health
+      fbpOldExempt  = lta + books + learn;
+      fbpBothExempt = meal + gift + gadgets + telecom + health;
+    }
+
+    // ── NPS Employer ──
+    let oldNPS = 0, newNPS = 0;
+    if (document.getElementById('nps-yes').checked) {
+      const maxOld = Math.round(basic * 0.10);
+      const maxNew = Math.round(basic * 0.14);
+      // Set max as default if field is empty or exceeds max
+      const oldField = document.getElementById('nps-old-amount');
+      const newField = document.getElementById('nps-new-amount');
+      if (!oldField.value || parseFloat(oldField.value) > maxOld) oldField.value = maxOld;
+      if (!newField.value || parseFloat(newField.value) > maxNew) newField.value = maxNew;
+      oldField.max = maxOld;
+      newField.max = maxNew;
+      oldNPS = Math.min(parseFloat(oldField.value) || 0, maxOld);
+      newNPS = Math.min(parseFloat(newField.value) || 0, maxNew);
+      document.getElementById('nps-note').style.display = 'block';
+    } else {
+      document.getElementById('nps-note').style.display = 'none';
+    }
+
+    // ── Other Allowance (balancing) ──
+    const oldOther = Math.max(0, fixedCTC - (basic + hraAmt + insurance + pf + gratuity + oldNPS + fbpTotal));
+    const newOther = Math.max(0, fixedCTC - (basic + hraAmt + insurance + pf + gratuity + newNPS + fbpTotal));
+    document.getElementById('other-allowance').value =
+      '₹' + fmt(oldOther) + ' (Old)  /  ₹' + fmt(newOther) + ' (New)';
+
+    // ── Update Salary Breakdown Table ──
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = '₹' + fmt(val); };
+    set('result-basic-old', basic);     set('result-basic-new', basic);
+    set('result-hra-old', hraAmt);      set('result-hra-new', hraAmt);
+    set('result-insurance-old', insurance); set('result-insurance-new', insurance);
+    set('result-pf-old', pf);           set('result-pf-new', pf);
+    set('result-gratuity-old', gratuity); set('result-gratuity-new', gratuity);
+    set('result-nps-old', oldNPS);      set('result-nps-new', newNPS);
+    set('result-fbp-old', fbpTotal);    set('result-fbp-new', fbpTotal);
+    set('result-other-old', oldOther);  set('result-other-new', newOther);
+    set('variable-old', variablePay);   set('variable-new', variablePay);
+    set('result-ctc-old', basic + hraAmt + insurance + pf + gratuity + oldNPS + fbpTotal + oldOther + variablePay);
+    set('result-ctc-new', basic + hraAmt + insurance + pf + gratuity + newNPS + fbpTotal + newOther + variablePay);
+
+    // Pass to tax
+    calculateTax({ basic, hraAmt, insurance, pf, gratuity, oldNPS, newNPS,
+                   fbpTotal, fbpOldExempt, fbpBothExempt, oldOther, newOther, variablePay, fixedCTC });
+  }
+
+  function toggleNPS() {
+    const show = document.getElementById('nps-yes').checked;
+    document.getElementById('nps-container').style.display = show ? 'block' : 'none';
+    if (!show) {
+      document.getElementById('nps-old-amount').value = '';
+      document.getElementById('nps-new-amount').value = '';
+    }
+    calculateSalary();
+  }
+
+  function toggleFBP() {
+    const show = document.getElementById('fbp-yes').checked;
+    document.getElementById('fbp-container').style.display = show ? 'block' : 'none';
+    if (!show) {
+      ['gadget','telecom','books','health','learning','meal','gift-card','lta'].forEach(id => {
+        const el = document.getElementById(id === 'gift-card' ? 'gift-card' : id + '-allowance');
+        if(el) el.value = '0';
+      });
+      // reset lta separately
+      const ltaEl = document.getElementById('lta');
+      if(ltaEl) ltaEl.value = '0';
+    }
+    calculateSalary();
+  }
+
+  function toggleHRADeclaration() {
+    const show = document.getElementById('hra-declaration-yes').checked;
+    document.getElementById('hra-declaration-container').style.display = show ? 'block' : 'none';
+    if (!show) {
+      document.getElementById('hra-exemption').value = '0';
+      document.getElementById('hra-exemption-display') && (document.getElementById('hra-exemption-display').textContent = '₹0');
+    }
+    calculateHRAExemption();
+  }
+
+  function calculateHRAExemption() {
+    if (!document.getElementById('hra-declaration-yes').checked) {
+      document.getElementById('hra-exemption').value = '0';
+      calculateTax();
+      return;
+    }
+    const basic   = parseFloat(document.getElementById('basic').value) || 0;
+    const hraAmt  = parseFloat(document.getElementById('hra').value) || 0;
+    const rent    = parseFloat(document.getElementById('rent-paid').value) || 0;
+    const isMetro = document.getElementById('metro-city').value === 'yes';
+
+    const opt1 = hraAmt;                              // A: Actual HRA received
+    const opt2 = Math.max(0, rent - basic * 0.1);     // B: Rent - 10% of Basic
+    const opt3 = basic * (isMetro ? 0.5 : 0.4);       // C: 50%/40% of Basic
+
+    const exemption = Math.min(opt1, opt2, opt3);
+    const limiting  = Math.min(opt1, opt2, opt3);
+
+    // Max useful rent = 10% of Basic + min(HRA, 50%/40% of Basic)
+    // Beyond this, opt2 ≥ opt3 or opt1, so further rent doesn't increase exemption
+    const maxUsefulRent = Math.round(basic * 0.1 + Math.min(opt1, opt3));
+
+    // Tag the limiting leg
+    const tag = (val) => val === limiting
+      ? '<span style="color:#e74c3c; font-weight:bold;">← Limiting ⚠</span>'
+      : '<span style="color:#27ae60;">✓</span>';
+
+    document.getElementById('hra-opt1').textContent      = '₹' + fmt(opt1);
+    document.getElementById('hra-opt2').textContent      = '₹' + fmt(opt2);
+    document.getElementById('hra-opt3').textContent      = '₹' + fmt(opt3);
+    document.getElementById('hra-opt1-tag').innerHTML    = tag(opt1);
+    document.getElementById('hra-opt2-tag').innerHTML    = tag(opt2);
+    document.getElementById('hra-opt3-tag').innerHTML    = tag(opt3);
+    document.getElementById('hra-opt3-label').textContent = (isMetro ? '50%' : '40%') + ' of Basic (' + (isMetro ? 'Metro' : 'Non-Metro') + ')';
+    document.getElementById('hra-max-rent').textContent  = '₹' + fmt(maxUsefulRent) + ' p.a. (₹' + fmt(maxUsefulRent/12) + '/month)';
+    document.getElementById('hra-exemption-display').textContent = '₹' + fmt(exemption);
+    document.getElementById('hra-exemption').value       = exemption.toFixed(0);
+
+    calculateTax();
+  }
+
+  function calculateTax(comp) {
+    // If called without params (e.g. from tax declaration inputs), re-derive
+    if (!comp) {
+      const basic    = parseFloat(document.getElementById('basic').value) || 0;
+      const hraAmt   = parseFloat(document.getElementById('hra').value) || 0;
+      const insurance = document.getElementById('insurance-yes').checked
+                        ? (parseFloat(document.getElementById('insurance-amount').value) || 0) : 0;
+      const pf       = 21600;
+      const gratuity = document.getElementById('gratuity-yes').checked ? basic * 0.0481 : 0;
+      const varPay   = parseFloat(document.getElementById('variable-pay').value) || 0;
+      const fixedCTC = parseFloat(document.getElementById('ctc').value) || 0;
+      const oldNPS   = document.getElementById('nps-yes').checked
+                       ? (parseFloat(document.getElementById('nps-old-amount').value) || 0) : 0;
+      const newNPS   = document.getElementById('nps-yes').checked
+                       ? (parseFloat(document.getElementById('nps-new-amount').value) || 0) : 0;
+      let fbpTotal=0, fbpOldExempt=0, fbpBothExempt=0;
+      if (document.getElementById('fbp-yes').checked) {
+        const gadgets = Math.min(+document.getElementById('gadget-allowance').value, 42000);
+        const telecom = Math.min(+document.getElementById('telecom-allowance').value, 36000);
+        const books   = Math.min(+document.getElementById('books-allowance').value,  12000);
+        const health  = Math.min(+document.getElementById('health-allowance').value, 36000);
+        const learn   = Math.min(+document.getElementById('learning-allowance').value, 36000);
+        const meal    = Math.min(+document.getElementById('meal-coupon').value,      144000);
+        const gift    = Math.min(+document.getElementById('gift-card').value,         15000);
+        const lta     = Math.min(+document.getElementById('lta').value,               60000);
+        fbpTotal      = gadgets + telecom + books + health + learn + meal + gift + lta;
+        fbpOldExempt  = lta + books + learn;
+        fbpBothExempt = meal + gift + gadgets + telecom + health;
+      }
+      const oldOther = Math.max(0, fixedCTC - (basic+hraAmt+insurance+pf+gratuity+oldNPS+fbpTotal));
+      const newOther = Math.max(0, fixedCTC - (basic+hraAmt+insurance+pf+gratuity+newNPS+fbpTotal));
+      comp = { basic, hraAmt, insurance, pf, gratuity, oldNPS, newNPS,
+               fbpTotal, fbpOldExempt, fbpBothExempt, oldOther, newOther,
+               variablePay: varPay, fixedCTC };
+    }
+
+    const { basic, hraAmt, insurance, pf, gratuity, oldNPS, newNPS,
+            fbpTotal, fbpOldExempt, fbpBothExempt, oldOther, newOther, variablePay } = comp;
+
+    // ── Gross Salary for Tax ──
+    // Old: basic + hra + other + variable + FBP taxable (fbpTotal - fbpOldExempt - fbpBothExempt)
+    const fbpTaxableOld = Math.max(0, fbpTotal - fbpOldExempt - fbpBothExempt);
+    const fbpTaxableNew = Math.max(0, fbpTotal - fbpBothExempt);
+
+    const grossOld = basic + hraAmt + oldOther + variablePay + fbpTaxableOld;
+    const grossNew = basic + hraAmt + newOther + variablePay + fbpTaxableNew;
+
+    // ── Deductions ──
+    const stdOld = 50000, stdNew = 75000;
+    const hraEx  = parseFloat(document.getElementById('hra-exemption').value) || 0;
+    const sec80c = Math.min(parseFloat(document.getElementById('section80c').value)         || 0, 150000);
+    const sec80d = Math.min(parseFloat(document.getElementById('section80d').value)         || 0, 75000);
+    const npsEmp = Math.min(parseFloat(document.getElementById('nps-employee').value)       || 0, 50000);
+    const homeLi = Math.min(parseFloat(document.getElementById('home-loan-interest').value) || 0, 200000);
+    const eduLi  = parseFloat(document.getElementById('education-loan-interest').value)     || 0;
+
+    const taxInvOld = stdOld + hraEx + sec80c + sec80d + npsEmp + homeLi + eduLi;
+    const taxInvNew = stdNew;
+
+    const taxIncOld = Math.max(0, grossOld - taxInvOld);
+    const taxIncNew = Math.max(0, grossNew - taxInvNew);
+
+    const oldBreak = calculateOldRegimeTax(taxIncOld);
+    const newBreak = calculateNewRegimeTax(taxIncNew);
+
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = '₹' + fmt(val); };
+
+    // Old regime table
+    set('old-gross-salary',    grossOld);
+    set('old-hra-exemption',   hraEx);
+    set('old-section80c',      sec80c);
+    set('old-section80d',      sec80d);
+    set('old-nps-employee',    npsEmp);
+    set('old-home-loan',       homeLi);
+    set('old-edu-loan',        eduLi);
+    set('old-taxable-income',  taxIncOld);
+    set('old-base-tax',        oldBreak.baseTax);
+    set('old-surcharge',       oldBreak.surcharge);
+    set('old-cess',            oldBreak.cess);
+    set('old-total-tax',       oldBreak.total);
+
+    // New regime table
+    set('new-gross-salary',    grossNew);
+    set('new-taxable-income',  taxIncNew);
+    set('new-base-tax',        newBreak.baseTax);
+    set('new-rebate',          newBreak.rebate);
+    set('new-surcharge',       newBreak.surcharge);
+    set('new-cess',            newBreak.cess);
+    set('new-total-tax',       newBreak.total);
+
+    // ── Recommendation ──
+    const recEl = document.getElementById('recommended-regime');
+    const savEl = document.getElementById('tax-saving');
+    const saving = Math.abs(oldBreak.total - newBreak.total);
+    savEl.textContent = '₹' + fmt(saving);
+    if (newBreak.total < oldBreak.total) {
+      recEl.innerHTML = '<span class="regime-badge new">New Regime</span>';
+    } else if (oldBreak.total < newBreak.total) {
+      recEl.innerHTML = '<span class="regime-badge">Old Regime</span>';
+    } else {
+      recEl.textContent = 'Both are Equal';
+    }
+
+    // ── Net Take-Home ──
+    // Gross cash = taxable salary components (what payroll processes as salary)
+    // Flexi = exempt reimbursements (claimed against bills, not TDS'd)
+    // Bank Credit = Gross cash - PF Employee - Tax
+    // Total Net Pay = Bank Credit + Flexi Benefits
+
+    const pfEmployee = 21600;
+
+    // Cash salary (taxable portion that goes through payroll)
+    const cashSalaryOld = basic + hraAmt + oldOther + variablePay + fbpTaxableOld;
+    const cashSalaryNew = basic + hraAmt + newOther + variablePay + fbpTaxableNew;
+
+    // Flexi benefits received (exempt reimbursements + both-regime exemptions)
+    // Old: fbpBothExempt + fbpOldExempt | New: fbpBothExempt only
+    const flexiOld = fbpBothExempt + fbpOldExempt;
+    const flexiNew = fbpBothExempt;
+
+    // Bank credit (monthly salary in account)
+    const bankOldAnnual = cashSalaryOld - pfEmployee - oldBreak.total;
+    const bankNewAnnual = cashSalaryNew - pfEmployee - newBreak.total;
+
+    // Total net pay = bank credit + flexi benefits
+    const netOldAnnual = bankOldAnnual + flexiOld;
+    const netNewAnnual = bankNewAnnual + flexiNew;
+
+    set('old-gross-cash',   cashSalaryOld);
+    set('new-gross-cash',   cashSalaryNew);
+    set('old-pf-emp',       pfEmployee);
+    set('new-pf-emp',       pfEmployee);
+    set('old-tax-deduct',   oldBreak.total);
+    set('new-tax-deduct',   newBreak.total);
+    set('old-bank-annual',  Math.max(0, bankOldAnnual));
+    set('new-bank-annual',  Math.max(0, bankNewAnnual));
+    set('old-bank-monthly', Math.max(0, bankOldAnnual / 12));
+    set('new-bank-monthly', Math.max(0, bankNewAnnual / 12));
+    set('old-flexi-annual', flexiOld);
+    set('new-flexi-annual', flexiNew);
+    set('old-flexi-monthly', flexiOld / 12);
+    set('new-flexi-monthly', flexiNew / 12);
+    set('old-net-annual',   Math.max(0, netOldAnnual));
+    set('new-net-annual',   Math.max(0, netNewAnnual));
+    set('old-net-monthly',  Math.max(0, netOldAnnual / 12));
+    set('new-net-monthly',  Math.max(0, netNewAnnual / 12));
+
+    // NPS corpus note
+    set('result-nps-old-net', oldNPS);
+    set('result-nps-new-net', newNPS);
+  }
+
+  // ══════════════════════════════════════════
+  // AUTO-OPTIMISE — fills all fields to maximise take-home
+  // Strategy:
+  //   1. Fill all FBP to max limits
+  //   2. Opt NPS employer at max
+  //   3. For old regime: max 80C, 80D, NPS employee, HRA at optimal rent
+  //   4. Run both regimes, pick winner, show summary
+  // ══════════════════════════════════════════
+  function autoOptimise() {
+    const totalCTC = parseFloat(document.getElementById('total-ctc').value) || 0;
+    if (!totalCTC) {
+      alert('Please enter your CTC first, then click Auto-Optimise.');
+      return;
+    }
+
+    // ── Step 0: Insurance & Gratuity — keep as Yes (maximises structure) ──
+    document.getElementById('insurance-yes').checked = true;
+    document.getElementById('insurance-no').checked  = false;
+    document.getElementById('gratuity-yes').checked  = true;
+    document.getElementById('gratuity-no').checked   = false;
+
+    // ── Step 1: FBP — max out everything ──
+    document.getElementById('fbp-yes').checked = true;
+    document.getElementById('fbp-no').checked  = false;
+    document.getElementById('fbp-container').style.display = 'block';
+
+    document.getElementById('gadget-allowance').value   = 42000;
+    document.getElementById('telecom-allowance').value  = 36000;
+    document.getElementById('books-allowance').value    = 12000;
+    document.getElementById('health-allowance').value   = 36000;
+    document.getElementById('learning-allowance').value = 36000;
+    document.getElementById('meal-coupon').value        = 144000;
+    document.getElementById('gift-card').value          = 15000;
+    document.getElementById('lta').value                = 60000;
+
+    // ── Step 2: NPS employer at max ──
+    document.getElementById('nps-yes').checked = true;
+    document.getElementById('nps-no').checked  = false;
+    document.getElementById('nps-container').style.display = 'block';
+    // Trigger calculateSalary once to get basic computed so we can set NPS max
+    calculateSalary();
+    const basic = parseFloat(document.getElementById('basic').value) || 0;
+    document.getElementById('nps-old-amount').value = Math.round(basic * 0.10);
+    document.getElementById('nps-new-amount').value = Math.round(basic * 0.14);
+
+    // ── Step 3: Old regime deductions — max out ──
+    document.getElementById('section80c').value          = 150000;
+    document.getElementById('section80d').value          = 75000;   // ₹25k self + ₹50k parents
+    document.getElementById('nps-employee').value        = 50000;
+    document.getElementById('home-loan-interest').value  = 0;
+    document.getElementById('education-loan-interest').value = 0;
+
+    // ── Step 4: HRA — set rent to max useful ──
+    // Max useful rent = Basic×10% + min(HRA received, Basic×50%)
+    const hraAmt       = parseFloat(document.getElementById('hra').value) || 0;
+    const opt3         = basic * 0.5; // metro
+    const maxUsefulRent = Math.round(basic * 0.1 + Math.min(hraAmt, opt3));
+    document.getElementById('hra-declaration-yes').checked = true;
+    document.getElementById('hra-declaration-no').checked  = false;
+    document.getElementById('hra-declaration-container').style.display = 'block';
+    document.getElementById('metro-city').value  = 'yes';
+    document.getElementById('rent-paid').value   = maxUsefulRent;
+
+    // ── Step 5: Recalculate fully ──
+    calculateSalary();
+    calculateHRAExemption();
+
+    // ── Step 6: Read results and pick winner ──
+    const oldTax = parseFloat(document.getElementById('old-total-tax').textContent.replace(/[₹,]/g,'')) || 0;
+    const newTax = parseFloat(document.getElementById('new-total-tax').textContent.replace(/[₹,]/g,'')) || 0;
+    const oldNet = parseFloat(document.getElementById('old-net-annual').textContent.replace(/[₹,]/g,'')) || 0;
+    const newNet = parseFloat(document.getElementById('new-net-annual').textContent.replace(/[₹,]/g,'')) || 0;
+
+    const winner     = newTax <= oldTax ? 'New Regime' : 'Old Regime';
+    const winnerNet  = newTax <= oldTax ? newNet : oldNet;
+    const winnerTax  = newTax <= oldTax ? newTax : oldTax;
+    const loserTax   = newTax <= oldTax ? oldTax : newTax;
+    const taxSaving  = Math.abs(oldTax - newTax);
+    const hraEx      = parseFloat(document.getElementById('hra-exemption').value) || 0;
+
+    // ── Step 7: Build summary ──
+    const rows = [
+      { label: '🏢 FBP — All components', value: 'Maxed out (Gadget ₹42k + Telecom ₹36k + Books ₹12k + Health ₹36k + Learning ₹36k + Meal ₹1,44k + Gift ₹15k + LTA ₹60k)' },
+      { label: '📈 NPS Employer (Old / New)', value: '₹' + fmt(Math.round(basic*0.10)) + ' / ₹' + fmt(Math.round(basic*0.14)) + ' (maximum allowed)' },
+      { label: '💰 Section 80C', value: '₹1,50,000 (maxed)' },
+      { label: '🏥 Section 80D', value: '₹75,000 (₹25k self + ₹50k parents)' },
+      { label: '🏦 NPS Employee 80CCD(1B)', value: '₹50,000 (maxed)' },
+      { label: '🏠 HRA — Optimal Rent', value: '₹' + fmt(maxUsefulRent) + ' p.a. (₹' + fmt(Math.round(maxUsefulRent/12)) + '/month) → Exemption: ₹' + fmt(hraEx) },
+      { label: '🏆 Recommended Regime', value: '<strong style="color:' + (winner==='New Regime'?'#27ae60':'#e67e22') + '">' + winner + '</strong> — Tax: ₹' + fmt(winnerTax) + ' vs ₹' + fmt(loserTax) },
+      { label: '💸 Tax Saving vs other regime', value: '<strong style="color:#27ae60;">₹' + fmt(taxSaving) + '</strong>' },
+      { label: '✅ Maximum Annual Net Pay', value: '<strong>₹' + fmt(winnerNet) + '</strong> (₹' + fmt(Math.round(winnerNet/12)) + '/month)' },
+    ];
+
+    const html = rows.map(r =>
+      `<div style="display:flex; gap:8px; border-bottom:1px solid #d5f0e0; padding:5px 0;">
+         <div style="min-width:260px; font-weight:600; color:#1e8449;">${r.label}</div>
+         <div>${r.value}</div>
+       </div>`
+    ).join('');
+
+    document.getElementById('optimise-summary').innerHTML = html;
+    document.getElementById('optimise-banner').style.display = 'block';
+
+    // Scroll to banner
+    document.getElementById('optimise-banner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+</script>
+</body>
+</html>
