@@ -150,6 +150,23 @@
     <div class="form-group">
       <label for="variable-pay">Variable Pay ₹ <span class="note">(part of CTC)</span></label>
       <input type="number" id="variable-pay" min="0" step="1000" value="0" oninput="calculateSalary()">
+      <div id="var-month-container" style="display:none; margin-top:8px;">
+        <label style="font-weight:normal; font-size:0.85rem; color:#555;">Month variable pay is credited:</label>
+        <select id="variable-month" onchange="calculateSalary()" style="margin-top:4px;">
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9" selected>September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+          <option value="1">January</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -518,22 +535,39 @@
 
   <!-- Net Take-Home -->
   <h2 style="margin-top:30px;">Net Take-Home Salary</h2>
-  <div class="info-box">
-    <strong>Bank Credit</strong> = Cash salary credited to your bank account every month (after PF &amp; tax deductions).<br>
-    <strong>Flexi Benefits</strong> = Amount received as reimbursements against bills (e.g. meal, gadget, telecom, health) — not cash in bank but still yours to use.<br>
-    <strong>Total Net Pay</strong> = Bank Credit + Flexi Benefits received.
+  <div class="info-box" style="font-size:0.83rem;">
+    Monthly net pay is based on <strong>fixed salary only</strong> (variable excluded). When variable pay month is selected, the table shows
+    two phases: <strong>pre-variable months</strong> (Apr → month before payout) and <strong>post-variable months</strong> (payout month → Mar),
+    with incremental tax from variable spread across the remaining months.
   </div>
-  <table>
-    <tr><th>Item</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
-    <tr><td>Gross Salary (before deductions)</td><td id="old-gross-cash">–</td><td id="new-gross-cash">–</td></tr>
-    <tr><td>(-) PF Employee Contribution</td><td id="old-pf-emp">–</td><td id="new-pf-emp">–</td></tr>
-    <tr><td>(-) Income Tax (TDS)</td><td id="old-tax-deduct">–</td><td id="new-tax-deduct">–</td></tr>
-    <tr class="highlight"><td>💳 Annual Bank Credit</td><td id="old-bank-annual">–</td><td id="new-bank-annual">–</td></tr>
-    <tr class="highlight"><td>💳 Monthly Bank Credit</td><td id="old-bank-monthly">–</td><td id="new-bank-monthly">–</td></tr>
-    <tr><td style="padding-top:14px;">🎁 Flexi Benefits (Annual)</td><td id="old-flexi-annual">–</td><td id="new-flexi-annual">–</td></tr>
-    <tr><td>🎁 Flexi Benefits (Monthly)</td><td id="old-flexi-monthly">–</td><td id="new-flexi-monthly">–</td></tr>
+
+  <table id="net-pay-table">
+    <tr><th>Component</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
+
+    <!-- Fixed monthly (always shown) -->
+    <tr><td>Fixed Gross / Month (excl. variable)</td><td id="old-gross-cash">–</td><td id="new-gross-cash">–</td></tr>
+    <tr><td>(-) PF Employee / Month</td><td id="old-pf-emp">–</td><td id="new-pf-emp">–</td></tr>
+    <tr><td>(-) TDS on Fixed Pay / Month</td><td id="old-tax-deduct">–</td><td id="new-tax-deduct">–</td></tr>
+    <tr><td>🎁 Flexi Benefits / Month</td><td id="old-flexi-monthly">–</td><td id="new-flexi-monthly">–</td></tr>
+    <tr class="highlight-green"><td id="pre-var-label">✅ Monthly Net Take-Home</td><td id="old-net-monthly">–</td><td id="new-net-monthly">–</td></tr>
+
+    <!-- Post-variable rows (hidden when no variable pay) -->
+    <tbody id="post-var-rows" style="display:none;">
+      <tr><td colspan="3" style="padding:10px 0 4px; font-size:0.82rem; color:#e67e22; font-weight:bold;">
+        📅 From <span id="var-month-label">–</span> onwards (after variable payout)
+      </td></tr>
+      <tr><td>(-) Incremental TDS on Variable / Month <span style="font-size:0.78rem; color:#888;">(spread over remaining months)</span></td><td id="old-incremental-tds">–</td><td id="new-incremental-tds">–</td></tr>
+      <tr class="highlight"><td>💳 Revised Monthly Net (salary only)</td><td id="old-revised-bank">–</td><td id="new-revised-bank">–</td></tr>
+      <tr style="background:#fff8e1;"><td>🎯 Variable Pay credited <span style="font-size:0.78rem; color:#e67e22;">(one-time, net of tax — in <span id="var-month-credit-label">–</span> only)</span></td><td id="old-var-credit">–</td><td id="new-var-credit">–</td></tr>
+      <tr class="highlight-green"><td>✅ <span id="var-month-name-label">–</span> Total Bank Credit <span style="font-size:0.78rem; font-weight:normal; color:#27ae60;">(salary + variable)</span></td><td id="old-revised-net">–</td><td id="new-revised-net">–</td></tr>
+    </tbody>
+
+    <!-- Annual summary (always shown) -->
+    <tr><td colspan="3" style="padding:14px 0 4px; font-size:0.82rem; color:#666; font-style:italic; border-top:2px solid #ddd;">— Annual Summary —</td></tr>
+    <tr><td>Fixed Net Pay (monthly net × 12)</td><td id="old-bank-annual">–</td><td id="new-bank-annual">–</td></tr>
+    <tr><td>🎯 Variable Payout <span style="font-size:0.78rem; color:#e67e22; font-weight:normal;">(one-time gross — tax collected via monthly TDS)</span></td><td id="old-var-net">–</td><td id="new-var-net">–</td></tr>
+    <tr><td>🎁 Flexi Benefits (Annual)</td><td id="old-flexi-annual">–</td><td id="new-flexi-annual">–</td></tr>
     <tr class="highlight-green"><td>✅ Total Annual Net Pay</td><td id="old-net-annual">–</td><td id="new-net-annual">–</td></tr>
-    <tr class="highlight-green"><td>✅ Total Monthly Net Pay</td><td id="old-net-monthly">–</td><td id="new-net-monthly">–</td></tr>
   </table>
 
   <!-- NPS Note -->
@@ -656,6 +690,10 @@
     const totalCTC    = parseFloat(document.getElementById('total-ctc').value) || 0;
     const variablePay = parseFloat(document.getElementById('variable-pay').value) || 0;
     const fixedCTC    = Math.max(0, totalCTC - variablePay);
+
+    // Show variable month picker only when variable pay > 0
+    document.getElementById('var-month-container').style.display = variablePay > 0 ? 'block' : 'none';
+
     const insurance   = document.getElementById('insurance-yes').checked
                         ? (parseFloat(document.getElementById('insurance-amount').value) || 0) : 0;
     document.getElementById('insurance-container').style.display =
@@ -925,52 +963,121 @@
     }
 
     // ── Net Take-Home ──
-    // Gross cash = taxable salary components (what payroll processes as salary)
-    // Flexi = exempt reimbursements (claimed against bills, not TDS'd)
-    // Bank Credit = Gross cash - PF Employee - Tax
-    // Total Net Pay = Bank Credit + Flexi Benefits
-
     const pfEmployee = 21600;
 
-    // Cash salary (taxable portion that goes through payroll)
-    const cashSalaryOld = basic + hraAmt + oldOther + variablePay + fbpTaxableOld;
-    const cashSalaryNew = basic + hraAmt + newOther + variablePay + fbpTaxableNew;
+    // Fixed monthly gross (no variable)
+    const cashSalaryOld = basic + hraAmt + oldOther + fbpTaxableOld;
+    const cashSalaryNew = basic + hraAmt + newOther + fbpTaxableNew;
 
-    // Flexi benefits received (exempt reimbursements + both-regime exemptions)
-    // Old: fbpBothExempt + fbpOldExempt | New: fbpBothExempt only
+    // Tax on fixed salary only
+    const taxIncOldNoVar = Math.max(0, (grossOld - variablePay) - taxInvOld);
+    const taxIncNewNoVar = Math.max(0, (grossNew - variablePay) - taxInvNew);
+    const oldBreakNoVar  = calculateOldRegimeTax(taxIncOldNoVar);
+    const newBreakNoVar  = calculateNewRegimeTax(taxIncNewNoVar);
+
+    // Fixed monthly TDS (evenly over 12)
+    const fixedMonthlyTDSOld = oldBreakNoVar.total / 12;
+    const fixedMonthlyTDSNew = newBreakNoVar.total / 12;
+
+    // Flexi benefits
     const flexiOld = fbpBothExempt + fbpOldExempt;
-    const flexiNew = fbpBothExempt;
+    const flexiNew  = fbpBothExempt;
 
-    // Bank credit (monthly salary in account)
-    const bankOldAnnual = cashSalaryOld - pfEmployee - oldBreak.total;
-    const bankNewAnnual = cashSalaryNew - pfEmployee - newBreak.total;
+    // Monthly net (fixed only, before variable month)
+    const monthlyNetOld = cashSalaryOld/12 - pfEmployee/12 - fixedMonthlyTDSOld + flexiOld/12;
+    const monthlyNetNew = cashSalaryNew/12 - pfEmployee/12 - fixedMonthlyTDSNew + flexiNew/12;
 
-    // Total net pay = bank credit + flexi benefits
-    const netOldAnnual = bankOldAnnual + flexiOld;
-    const netNewAnnual = bankNewAnnual + flexiNew;
+    // Variable: incremental tax and net payout
+    const taxOnVarOld = oldBreak.total - oldBreakNoVar.total;
+    const taxOnVarNew = newBreak.total - newBreakNoVar.total;
+    const varNetOld   = variablePay - taxOnVarOld;
+    const varNetNew   = variablePay - taxOnVarNew;
 
-    set('old-gross-cash',   cashSalaryOld);
-    set('new-gross-cash',   cashSalaryNew);
-    set('old-pf-emp',       pfEmployee);
-    set('new-pf-emp',       pfEmployee);
-    set('old-tax-deduct',   oldBreak.total);
-    set('new-tax-deduct',   newBreak.total);
-    set('old-bank-annual',  Math.max(0, bankOldAnnual));
-    set('new-bank-annual',  Math.max(0, bankNewAnnual));
-    set('old-bank-monthly', Math.max(0, bankOldAnnual / 12));
-    set('new-bank-monthly', Math.max(0, bankNewAnnual / 12));
-    set('old-flexi-annual', flexiOld);
-    set('new-flexi-annual', flexiNew);
+    // Annual totals — variable shown gross since tax distributed via monthly TDS
+    const netOldAnnual = monthlyNetOld * 12 + variablePay;
+    const netNewAnnual = monthlyNetNew * 12 + variablePay;
+
+    // Populate fixed monthly rows (all /month)
+    set('old-gross-cash',    cashSalaryOld / 12);
+    set('new-gross-cash',    cashSalaryNew / 12);
+    set('old-pf-emp',        pfEmployee / 12);
+    set('new-pf-emp',        pfEmployee / 12);
+    set('old-tax-deduct',    fixedMonthlyTDSOld);
+    set('new-tax-deduct',    fixedMonthlyTDSNew);
     set('old-flexi-monthly', flexiOld / 12);
     set('new-flexi-monthly', flexiNew / 12);
+    set('old-net-monthly',   Math.max(0, monthlyNetOld));
+    set('new-net-monthly',   Math.max(0, monthlyNetNew));
+
+    // Annual summary
+    set('old-bank-annual',  Math.max(0, monthlyNetOld * 12));
+    set('new-bank-annual',  Math.max(0, monthlyNetNew * 12));
+    set('old-var-net',      variablePay);
+    set('new-var-net',      variablePay);
+    set('old-flexi-annual', flexiOld);
+    set('new-flexi-annual', flexiNew);
     set('old-net-annual',   Math.max(0, netOldAnnual));
     set('new-net-annual',   Math.max(0, netNewAnnual));
-    set('old-net-monthly',  Math.max(0, netOldAnnual / 12));
-    set('new-net-monthly',  Math.max(0, netNewAnnual / 12));
 
     // NPS corpus note
     set('result-nps-old-net', oldNPS);
     set('result-nps-new-net', newNPS);
+
+    // ── Post-variable revised monthly rows ──
+    const postVarRows = document.getElementById('post-var-rows');
+    if (variablePay > 0) {
+      const monthOrder  = [4,5,6,7,8,9,10,11,12,1,2,3];
+      const monthNames  = {4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec',1:'Jan',2:'Feb',3:'Mar'};
+      const varMonth    = parseInt(document.getElementById('variable-month').value);
+      const varIdx      = monthOrder.indexOf(varMonth);
+      const monthsBefore = varIdx;        // months Apr → month before variable
+      const monthsFrom   = 12 - varIdx;  // variable month → Mar
+
+      // TDS already deducted in months before variable month
+      const preVarTDSOld = fixedMonthlyTDSOld * monthsBefore;
+      const preVarTDSNew = fixedMonthlyTDSNew * monthsBefore;
+
+      // Remaining tax from variable month onwards (includes variable tax)
+      const remainingTaxOld = Math.max(0, oldBreak.total - preVarTDSOld);
+      const remainingTaxNew = Math.max(0, newBreak.total - preVarTDSNew);
+
+      // Revised monthly TDS from variable month
+      const revisedTDSOld = remainingTaxOld / monthsFrom;
+      const revisedTDSNew = remainingTaxNew / monthsFrom;
+
+      // Incremental TDS per month vs pre-variable rate
+      const incrTDSOld = revisedTDSOld - fixedMonthlyTDSOld;
+      const incrTDSNew = revisedTDSNew - fixedMonthlyTDSNew;
+
+      // Revised monthly net
+      const revisedNetOld = monthlyNetOld - incrTDSOld;
+      const revisedNetNew = monthlyNetNew - incrTDSNew;
+
+      // Update labels
+      const prevMonthName = monthsBefore > 0 ? monthNames[monthOrder[varIdx - 1]] : 'Mar';
+      document.getElementById('pre-var-label').textContent =
+        '✅ Monthly Net (Apr – ' + prevMonthName + ')';
+      document.getElementById('var-month-label').textContent =
+        monthNames[varMonth] + ' – Mar (' + monthsFrom + ' month' + (monthsFrom > 1 ? 's' : '') + ')';
+
+      set('old-incremental-tds', incrTDSOld);
+      set('new-incremental-tds', incrTDSNew);
+      set('old-revised-bank',    Math.max(0, revisedNetOld));
+      set('new-revised-bank',    Math.max(0, revisedNetNew));
+      set('old-var-credit',      variablePay);
+      set('new-var-credit',      variablePay);
+      set('old-revised-net',     Math.max(0, revisedNetOld + variablePay));
+      set('new-revised-net',     Math.max(0, revisedNetNew + variablePay));
+
+      const varMonthFullName = document.getElementById('variable-month').options[document.getElementById('variable-month').selectedIndex].text;
+      document.getElementById('var-month-credit-label').textContent  = varMonthFullName;
+      document.getElementById('var-month-name-label').textContent    = varMonthFullName;
+
+      postVarRows.style.display = '';
+    } else {
+      document.getElementById('pre-var-label').textContent = '✅ Monthly Net Take-Home';
+      postVarRows.style.display = 'none';
+    }
   }
 
   // ══════════════════════════════════════════
