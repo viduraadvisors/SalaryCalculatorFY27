@@ -294,6 +294,13 @@
           <input type="number" id="gift-card" min="0" max="15000" step="1000" value="0" oninput="calculateSalary()">
         </div>
         <div class="form-group">
+          <label for="education-allowance">
+            Children Education Allowance <span class="tag-or">OR</span>
+            <span class="note">&nbsp;Max ₹36,000 (₹3,000/month) [Clause 14, IT Rules 2026]</span>
+          </label>
+          <input type="number" id="education-allowance" min="0" max="36000" step="1000" value="0" oninput="calculateSalary()">
+        </div>
+        <div class="form-group">
           <label for="lta">
             LTA <span class="tag-or">OR</span>
             <span class="note">&nbsp;Max ₹60,000</span>
@@ -311,28 +318,63 @@
   </div>
 
   <!-- ── Tax Declarations ── -->
-  <div class="section-header">Step 5 – Tax Declarations (Old Regime)</div>
+  <div class="section-header">Step 5 – Tax Declarations (Old Regime only)</div>
+  <div class="info-box" style="font-size:0.82rem;">
+    Old Act references shown first → New Income Tax Act 2025 equivalent in brackets. These deductions are <strong>not available</strong> under New Regime.
+  </div>
 
   <div class="two-col">
     <div class="form-group">
-      <label for="section80c">Section 80C <span class="note">Max ₹1,50,000</span></label>
+      <label for="section80c">80C → <span class="note">[Clause 123, IT Act 2025]</span> <span class="note">Max ₹1,50,000</span>
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">PF, PPF, ELSS, LIC, Home Loan Principal, Tuition Fees etc.</span>
+      </label>
       <input type="number" id="section80c" min="0" max="150000" step="1000" value="0" oninput="calculateTax()">
     </div>
     <div class="form-group">
-      <label for="section80d">Section 80D – Health Ins. <span class="note">Max ₹75,000</span></label>
+      <label for="section80d">80D → <span class="note">[Clause 125, IT Act 2025]</span> <span class="note">Max ₹75,000</span>
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">₹25,000 self + ₹50,000 parents (senior citizens)</span>
+      </label>
       <input type="number" id="section80d" min="0" max="75000" step="1000" value="0" oninput="calculateTax()">
     </div>
     <div class="form-group">
-      <label for="nps-employee">NPS Employee 80CCD(1B) <span class="note">Max ₹50,000</span></label>
+      <label for="nps-employee">80CCD(1B) → <span class="note">[Clause 123(e), IT Act 2025]</span> <span class="note">Max ₹50,000</span>
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">NPS Employee contribution (over & above 80C)</span>
+      </label>
       <input type="number" id="nps-employee" min="0" max="50000" step="1000" value="0" oninput="calculateTax()">
     </div>
     <div class="form-group">
-      <label for="home-loan-interest">Home Loan Interest <span class="note">Max ₹2,00,000</span></label>
+      <label for="home-loan-interest">Sec 24(b) → <span class="note">[Clause 71, IT Act 2025]</span> <span class="note">Max ₹2,00,000</span>
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">Home Loan Interest (self-occupied property)</span>
+      </label>
       <input type="number" id="home-loan-interest" min="0" max="200000" step="1000" value="0" oninput="calculateTax()">
     </div>
     <div class="form-group">
-      <label for="education-loan-interest">Education Loan Interest</label>
+      <label for="education-loan-interest">80E → <span class="note">[Clause 127, IT Act 2025]</span> <span class="note">No limit</span>
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">Education Loan Interest (actual interest paid)</span>
+      </label>
       <input type="number" id="education-loan-interest" min="0" step="1000" value="0" oninput="calculateTax()">
+    </div>
+    <div class="form-group">
+      <label>80G → <span class="note">[Clause 132, IT Act 2025]</span> — Donations
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">Select deduction rate, then enter amount donated</span>
+      </label>
+      <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+        <label class="toggle-option" style="font-weight:normal;">
+          <input type="radio" name="donation-rate" id="donation-100" value="100" checked onchange="calculateTax()"> 100% deduction
+          <span style="font-size:0.75rem; color:#888;">(PM Relief, PMNRF etc.)</span>
+        </label>
+        <label class="toggle-option" style="font-weight:normal;">
+          <input type="radio" name="donation-rate" id="donation-50" value="50" onchange="calculateTax()"> 50% deduction
+          <span style="font-size:0.75rem; color:#888;">(Other approved funds)</span>
+        </label>
+      </div>
+      <input type="number" id="donation-amount" min="0" step="1000" value="0" placeholder="Amount donated ₹" oninput="calculateTax()">
+    </div>
+    <div class="form-group">
+      <label for="political-party">80GGC → <span class="note">[Clause 134, IT Act 2025]</span> <span class="note">100% deduction</span>
+        <span style="display:block; font-weight:normal; font-size:0.78rem; color:#666;">Contribution to Political Party (non-cash only)</span>
+      </label>
+      <input type="number" id="political-party" min="0" step="1000" value="0" oninput="calculateTax()">
     </div>
   </div>
 
@@ -436,7 +478,9 @@
         <tr><td>Section 80D</td><td id="old-section80d">–</td></tr>
         <tr><td>NPS Employee (80CCD1B)</td><td id="old-nps-employee">–</td></tr>
         <tr><td>Home Loan Interest</td><td id="old-home-loan">–</td></tr>
-        <tr><td>Education Loan Interest</td><td id="old-edu-loan">–</td></tr>
+          <tr><td>Education Loan Interest (80E)</td><td id="old-edu-loan">–</td></tr>
+          <tr><td>Donations 80G (effective deduction)</td><td id="old-donation">–</td></tr>
+          <tr><td>Political Party 80GGC</td><td id="old-political">–</td></tr>
         <tr class="highlight"><td>Taxable Income</td><td id="old-taxable-income">–</td></tr>
         <tr><td>Base Tax</td><td id="old-base-tax">–</td></tr>
         <tr><td>Surcharge</td><td id="old-surcharge">–</td></tr>
@@ -499,6 +543,44 @@
       <tr><td>NPS Employer Contribution</td><td id="result-nps-old-net">–</td><td id="result-nps-new-net">–</td></tr>
     </table>
     <p style="font-size:0.8rem; color:#888; margin-top:6px;">* NPS employer contribution is part of CTC but received as corpus at retirement / exit.</p>
+  </div>
+
+  <!-- ── Vidura Advisors Footer ── -->
+  <div style="margin-top:36px; border-top:2px solid #1A2744; padding-top:24px;">
+    <div style="background:linear-gradient(135deg, #1A2744 0%, #2c3e50 100%); border-radius:10px; padding:24px 28px; color:#fff; display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:1.05rem; font-weight:bold; color:#D4A843; margin-bottom:6px;">Found this useful?</div>
+        <div style="font-size:0.92rem; line-height:1.7; color:#e0e0e0;">
+          This calculator was built by <strong style="color:#fff;">Vidura Advisors</strong> — a full-stack financial, regulatory &amp; strategic advisory firm.<br>
+          <span style="font-size:0.83rem; color:#aaa; font-style:italic;">From Incorporation to IPO.</span>
+        </div>
+        <div style="margin-top:12px; font-size:0.88rem; color:#e0e0e0; line-height:1.8;">
+          Whether it's <strong style="color:#D4A843;">tax filing</strong>, <strong style="color:#D4A843;">salary structuring</strong>, <strong style="color:#D4A843;">GST compliance</strong>,
+          <strong style="color:#D4A843;">business setup</strong> or <strong style="color:#D4A843;">financial advisory</strong> —
+          our team brings Big-4 expertise to every engagement.
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; min-width:220px;">
+        <a href="mailto:saitharun@viduraadvisors.com"
+           style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.08); border:1px solid rgba(212,168,67,0.4); border-radius:7px; padding:10px 14px; text-decoration:none; color:#fff; font-size:0.88rem; transition:background 0.2s;"
+           onmouseover="this.style.background='rgba(212,168,67,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          <span style="font-size:1.1rem;">✉</span>
+          <span>saitharun@viduraadvisors.com</span>
+        </a>
+        <a href="https://wa.me/917013316969?text=Hi%20Sai%2C%20I%20used%20the%20Vidura%20Salary%20Calculator%20and%20would%20like%20to%20connect."
+           target="_blank"
+           style="display:flex; align-items:center; gap:10px; background:rgba(37,211,102,0.15); border:1px solid rgba(37,211,102,0.4); border-radius:7px; padding:10px 14px; text-decoration:none; color:#fff; font-size:0.88rem; transition:background 0.2s;"
+           onmouseover="this.style.background='rgba(37,211,102,0.25)'" onmouseout="this.style.background='rgba(37,211,102,0.15)'">
+          <span style="font-size:1.1rem;">💬</span>
+          <span>WhatsApp: +91 70133 16969</span>
+        </a>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:10px; font-size:0.75rem; color:#aaa;">
+      This calculator is for informational purposes only and does not constitute professional tax advice.
+      Please consult a qualified Chartered Accountant before making financial decisions.
+      &nbsp;|&nbsp; © 2026 Vidura Advisors
+    </div>
   </div>
 
 </div>
@@ -605,13 +687,14 @@
       const learn   = Math.min(+document.getElementById('learning-allowance').value, 36000);
       const meal    = Math.min(+document.getElementById('meal-coupon').value,      144000);
       const gift    = Math.min(+document.getElementById('gift-card').value,         15000);
+      const edu     = Math.min(+document.getElementById('education-allowance').value, 36000);
       const lta     = Math.min(+document.getElementById('lta').value,               60000);
 
-      fbpTotal = gadgets + telecom + books + health + learn + meal + gift + lta;
+      fbpTotal = gadgets + telecom + books + health + learn + meal + gift + edu + lta;
 
-      // Old regime only: LTA, books, learning
+      // Old regime only: LTA, books, learning, education allowance
       // Both regimes: meal, gift, gadgets, telecom, health
-      fbpOldExempt  = lta + books + learn;
+      fbpOldExempt  = lta + books + learn + edu;
       fbpBothExempt = meal + gift + gadgets + telecom + health;
     }
 
@@ -673,13 +756,11 @@
     const show = document.getElementById('fbp-yes').checked;
     document.getElementById('fbp-container').style.display = show ? 'block' : 'none';
     if (!show) {
-      ['gadget','telecom','books','health','learning','meal','gift-card','lta'].forEach(id => {
-        const el = document.getElementById(id === 'gift-card' ? 'gift-card' : id + '-allowance');
+      ['gadget-allowance','telecom-allowance','books-allowance','health-allowance',
+       'learning-allowance','meal-coupon','gift-card','education-allowance','lta'].forEach(id => {
+        const el = document.getElementById(id);
         if(el) el.value = '0';
       });
-      // reset lta separately
-      const ltaEl = document.getElementById('lta');
-      if(ltaEl) ltaEl.value = '0';
     }
     calculateSalary();
   }
@@ -759,9 +840,10 @@
         const learn   = Math.min(+document.getElementById('learning-allowance').value, 36000);
         const meal    = Math.min(+document.getElementById('meal-coupon').value,      144000);
         const gift    = Math.min(+document.getElementById('gift-card').value,         15000);
+        const edu     = Math.min(+document.getElementById('education-allowance').value, 36000);
         const lta     = Math.min(+document.getElementById('lta').value,               60000);
-        fbpTotal      = gadgets + telecom + books + health + learn + meal + gift + lta;
-        fbpOldExempt  = lta + books + learn;
+        fbpTotal      = gadgets + telecom + books + health + learn + meal + gift + edu + lta;
+        fbpOldExempt  = lta + books + learn + edu;
         fbpBothExempt = meal + gift + gadgets + telecom + health;
       }
       const oldOther = Math.max(0, fixedCTC - (basic+hraAmt+insurance+pf+gratuity+oldNPS+fbpTotal));
@@ -790,8 +872,12 @@
     const npsEmp = Math.min(parseFloat(document.getElementById('nps-employee').value)       || 0, 50000);
     const homeLi = Math.min(parseFloat(document.getElementById('home-loan-interest').value) || 0, 200000);
     const eduLi  = parseFloat(document.getElementById('education-loan-interest').value)     || 0;
+    const donAmt  = parseFloat(document.getElementById('donation-amount').value)            || 0;
+    const donRate = document.getElementById('donation-100').checked ? 1.0 : 0.5;
+    const don80g  = donAmt * donRate;
+    const pol80ggc = parseFloat(document.getElementById('political-party').value)           || 0;
 
-    const taxInvOld = stdOld + hraEx + sec80c + sec80d + npsEmp + homeLi + eduLi;
+    const taxInvOld = stdOld + hraEx + sec80c + sec80d + npsEmp + homeLi + eduLi + don80g + pol80ggc;
     const taxInvNew = stdNew;
 
     const taxIncOld = Math.max(0, grossOld - taxInvOld);
@@ -810,6 +896,8 @@
     set('old-nps-employee',    npsEmp);
     set('old-home-loan',       homeLi);
     set('old-edu-loan',        eduLi);
+    set('old-donation',        don80g);
+    set('old-political',       pol80ggc);
     set('old-taxable-income',  taxIncOld);
     set('old-base-tax',        oldBreak.baseTax);
     set('old-surcharge',       oldBreak.surcharge);
@@ -920,7 +1008,11 @@
     document.getElementById('learning-allowance').value = 36000;
     document.getElementById('meal-coupon').value        = 144000;
     document.getElementById('gift-card').value          = 15000;
+    document.getElementById('education-allowance').value = 36000;
     document.getElementById('lta').value                = 60000;
+    // Donations — leave as 0 (personal choice)
+    document.getElementById('donation-amount').value    = 0;
+    document.getElementById('political-party').value    = 0;
 
     // ── Step 2: NPS employer at max ──
     document.getElementById('nps-yes').checked = true;
@@ -969,7 +1061,7 @@
 
     // ── Step 7: Build summary ──
     const rows = [
-      { label: '🏢 FBP — All components', value: 'Maxed out (Gadget ₹42k + Telecom ₹36k + Books ₹12k + Health ₹36k + Learning ₹36k + Meal ₹1,44k + Gift ₹15k + LTA ₹60k)' },
+      { label: '🏢 FBP — All components', value: 'Maxed out (Gadget ₹42k + Telecom ₹36k + Books ₹12k + Health ₹36k + Learning ₹36k + Meal ₹1,44k + Gift ₹15k + Education ₹36k + LTA ₹60k)' },
       { label: '📈 NPS Employer (Old / New)', value: '₹' + fmt(Math.round(basic*0.10)) + ' / ₹' + fmt(Math.round(basic*0.14)) + ' (maximum allowed)' },
       { label: '💰 Section 80C', value: '₹1,50,000 (maxed)' },
       { label: '🏥 Section 80D', value: '₹75,000 (₹25k self + ₹50k parents)' },
