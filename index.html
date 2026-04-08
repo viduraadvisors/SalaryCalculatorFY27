@@ -129,7 +129,7 @@
 
 <h1>Salary Structuring Calculator</h1>
 <p class="subtitle">
-  Tax Year 2026-27 &nbsp;|&nbsp; Income Tax Act, 2025 &nbsp;|&nbsp; Income Tax Rules, 2026 &nbsp;|&nbsp; Hyderabad (Metro — 50% HRA)
+  Tax Year 2026-27 &nbsp;|&nbsp; Income Tax Act, 2025 &nbsp;|&nbsp; Income Tax Rules, 2026
 </p>
 <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:10px 16px; max-width:960px; margin:0 auto 18px; font-size:0.83rem; color:#555;">
   ⚠️ <strong>Applicable for Tax Year 2026-27 (April 1, 2026 – March 31, 2027) only.</strong>
@@ -411,7 +411,7 @@
         <div class="form-group">
           <label for="metro-city">Metro City?</label>
           <select id="metro-city" onchange="calculateHRAExemption()">
-            <option value="yes" selected>Yes (Hyderabad / Mumbai / Delhi / Chennai / Kolkata / Bengaluru)</option>
+            <option value="yes" selected>Yes (Mumbai / Delhi / Chennai / Kolkata / Bengaluru / Hyderabad / Pune / Ahmedabad)</option>
             <option value="no">No</option>
           </select>
         </div>
@@ -546,7 +546,8 @@
 
     <!-- Fixed monthly (always shown) -->
     <tr><td>Fixed Gross / Month (excl. variable)</td><td id="old-gross-cash">–</td><td id="new-gross-cash">–</td></tr>
-    <tr><td>(-) PF Employee / Month</td><td id="old-pf-emp">–</td><td id="new-pf-emp">–</td></tr>
+    <tr><td>(-) PF Employee / Month <span class="note">₹1,800</span></td><td id="old-pf-emp">–</td><td id="new-pf-emp">–</td></tr>
+    <tr><td>(-) Professional Tax / Month <span class="note">₹200</span></td><td colspan="2" style="text-align:center;" id="pt-display">₹200</td></tr>
     <tr><td>(-) TDS on Fixed Pay / Month</td><td id="old-tax-deduct">–</td><td id="new-tax-deduct">–</td></tr>
     <tr><td>🎁 Flexi Benefits / Month</td><td id="old-flexi-monthly">–</td><td id="new-flexi-monthly">–</td></tr>
     <tr class="highlight-green"><td id="pre-var-label">✅ Monthly Net Take-Home</td><td id="old-net-monthly">–</td><td id="new-net-monthly">–</td></tr>
@@ -963,7 +964,9 @@
     }
 
     // ── Net Take-Home ──
-    const pfEmployee = 21600;
+    const pfEmployee    = 21600;
+    const pfEmpMonthly  = 1800;   // ₹1,800/month employee PF contribution
+    const ptMonthly     = 200;    // ₹200/month Professional Tax
 
     // Fixed monthly gross (no variable)
     const cashSalaryOld = basic + hraAmt + oldOther + fbpTaxableOld;
@@ -983,9 +986,9 @@
     const flexiOld = fbpBothExempt + fbpOldExempt;
     const flexiNew  = fbpBothExempt;
 
-    // Monthly net (fixed only, before variable month)
-    const monthlyNetOld = cashSalaryOld/12 - pfEmployee/12 - fixedMonthlyTDSOld + flexiOld/12;
-    const monthlyNetNew = cashSalaryNew/12 - pfEmployee/12 - fixedMonthlyTDSNew + flexiNew/12;
+    // Monthly net (fixed only, before variable month) — deducting PF employee + PT
+    const monthlyNetOld = cashSalaryOld/12 - pfEmpMonthly - ptMonthly - fixedMonthlyTDSOld + flexiOld/12;
+    const monthlyNetNew = cashSalaryNew/12 - pfEmpMonthly - ptMonthly - fixedMonthlyTDSNew + flexiNew/12;
 
     // Variable: incremental tax and net payout
     const taxOnVarOld = oldBreak.total - oldBreakNoVar.total;
@@ -994,14 +997,15 @@
     const varNetNew   = variablePay - taxOnVarNew;
 
     // Annual totals — variable shown gross since tax distributed via monthly TDS
+    // PT = ₹200 × 12 = ₹2,400/year already captured in monthly net
     const netOldAnnual = monthlyNetOld * 12 + variablePay;
     const netNewAnnual = monthlyNetNew * 12 + variablePay;
 
     // Populate fixed monthly rows (all /month)
     set('old-gross-cash',    cashSalaryOld / 12);
     set('new-gross-cash',    cashSalaryNew / 12);
-    set('old-pf-emp',        pfEmployee / 12);
-    set('new-pf-emp',        pfEmployee / 12);
+    set('old-pf-emp',        pfEmpMonthly);
+    set('new-pf-emp',        pfEmpMonthly);
     set('old-tax-deduct',    fixedMonthlyTDSOld);
     set('new-tax-deduct',    fixedMonthlyTDSNew);
     set('old-flexi-monthly', flexiOld / 12);
