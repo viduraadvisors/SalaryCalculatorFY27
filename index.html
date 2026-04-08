@@ -131,6 +131,11 @@
 <p class="subtitle">
   Tax Year 2026-27 &nbsp;|&nbsp; Income Tax Act, 2025 &nbsp;|&nbsp; Income Tax Rules, 2026
 </p>
+<div style="text-align:center; margin-bottom:10px;">
+  <span style="display:inline-flex; align-items:center; gap:8px; background:#1A2744; color:#fff; padding:6px 18px; border-radius:20px; font-size:0.82rem; letter-spacing:0.3px;">
+    👥 <span id="visit-count" style="color:#D4A843; font-weight:bold;">...</span>&nbsp;professionals have used this calculator
+  </span>
+</div>
 <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:10px 16px; max-width:960px; margin:0 auto 18px; font-size:0.83rem; color:#555;">
   ⚠️ <strong>Applicable for Tax Year 2026-27 (April 1, 2026 – March 31, 2027) only.</strong>
   Governed by the <strong>Income Tax Act, 2025</strong> (effective 1 Apr 2026) and <strong>Income Tax Rules, 2026</strong>.
@@ -1194,6 +1199,24 @@
     // Scroll to banner
     document.getElementById('optimise-banner').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+  // ── Visit Counter ──
+  // CountAPI — free shared counter, no data captured, just visit count
+  // Starting baseline: 596 (pre-launch testers) + live count
+  (function() {
+    const BASELINE = 596;
+    fetch('https://api.countapi.xyz/hit/viduraadvisors-salary-calc/visits')
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById('visit-count');
+        if (el && data.value) {
+          el.textContent = Number(BASELINE + data.value).toLocaleString('en-IN');
+        }
+      })
+      .catch(() => {
+        // Silently fail — counter stays as "..."
+      });
+  })();
 
 </script>
 </body>
